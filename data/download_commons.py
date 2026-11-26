@@ -24,7 +24,7 @@ import requests
 
 API = "https://commons.wikimedia.org/w/api.php"
 # Wikimedia exige un User-Agent identifiable : mettez l'adresse de l'équipe.
-HEADERS = {"User-Agent": "LoRA-student-project/1.0 (contact: equipe@example.com)"}
+HEADERS = {"User-Agent": "lora-zellige-student-project/1.0 (https://github.com/braziyass/lora-zellige; educational use)"}
 OK_PREFIXES = ("cc0", "public domain", "pd", "cc by ", "cc by-sa", "cc-by")
 BAD_MARKERS = ("nc", "nd", "non-commercial", "noderivs", "fair use")
 FIELDS = ["file", "source_url", "page_url", "author", "license", "license_url",
@@ -68,7 +68,7 @@ def main():
     ap.add_argument("--category", required=True, help="ex. 'Zellige'")
     ap.add_argument("--limit", type=int, default=80)
     ap.add_argument("--min_side", type=int, default=512)
-    ap.add_argument("--width", type=int, default=1024, help="largeur de la vignette téléchargée")
+    ap.add_argument("--width", type=int, default=1280, help="largeur de vignette (tailles standard Wikimedia : 960, 1280…)")
     ap.add_argument("--out", default="data/raw")
     ap.add_argument("--sources", default="data/sources.csv")
     args = ap.parse_args()
@@ -101,8 +101,18 @@ def main():
         fname = f"commons_{page['pageid']}{ext}"
         if fname in rows:
             continue
-        img = requests.get(url, headers=HEADERS, timeout=60)
-        img.raise_for_status()
+        img = None
+        for u in (url, info["url"]):          # vignette, sinon fichier original
+            try:
+                img = requests.get(u, headers=HEADERS, timeout=60)
+                img.raise_for_status()
+                break
+            except requests.RequestException as e:
+                print(f"  échec {u[:80]}… ({e})")
+                img = None
+                time.sleep(1)
+        if img is None:
+            continue
         (out / fname).write_bytes(img.content)
         rows[fname] = {
             "file": fname,
