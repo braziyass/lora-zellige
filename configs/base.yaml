@@ -17,7 +17,7 @@ data:
   train_dir: data/processed/train
   test_dir: data/processed/test
   resolution: 512
-  test_size: 8              # 5 à 10 images réservées pour tester la généralisation
+  test_size: 5              # 5 à 10 images réservées (21 images retenues → 16 train / 5 test)
   # Miroir horizontal : OK pour zellige/portes, à DÉSACTIVER pour la calligraphie
   random_flip: true
   # Jeton rare qui « porte » le concept appris

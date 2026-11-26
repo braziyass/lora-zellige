@@ -8,7 +8,7 @@
 | Élément | Valeur *(à compléter)* |
 |---|---|
 | Domaine | Zellige marocain (mosaïque de carreaux émaillés taillés) — **un seul concept** |
-| Nombre d'images | … au total (… entraînement / … test), cible 20-50 |
+| Nombre d'images | 84 téléchargées → 21 retenues (16 entraînement / 5 test) |
 | Résolution | 512 × 512 (recadrage centré, `src/prepare_data.py`) |
 | Sources | Wikimedia Commons (catégories : `Zellij in Morocco`, `Zellij fountains in Morocco`), Openverse, photos de l'équipe |
 | Licences acceptées | CC0, domaine public, CC BY, CC BY-SA (pas de NC / ND) |
