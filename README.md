@@ -28,7 +28,7 @@ Ou ouvrez directement les notebooks de `notebooks/` (la première cellule fait l
 
 ```bash
 # 1) Données : téléchargement sous licence libre puis légendage MANUEL dans data/sources.csv
-python data/download_commons.py --category "Zellige" --limit 80
+python data/download_commons.py --category "Zellij in Morocco" --limit 80
 #    → ouvrir data/sources.csv, mettre keep=1/0 et écrire une légende courte par image
 python -m src.prepare_data --config configs/base.yaml
 

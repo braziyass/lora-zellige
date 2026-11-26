@@ -8,8 +8,8 @@ descriptive pour chaque image retenue (étape obligatoire, pas d'automatisation
 aveugle).
 
 Usage (Colab / Kaggle, accès réseau requis) :
-    python data/download_commons.py --category "Zellige" --limit 80
-    python data/download_commons.py --category "Zellige in Fez" --limit 40
+    python data/download_commons.py --category "Zellij in Morocco" --limit 80
+    python data/download_commons.py --category "Zellij fountains in Morocco" --limit 30
 """
 from __future__ import annotations
 

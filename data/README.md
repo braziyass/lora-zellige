@@ -10,13 +10,13 @@
 | Domaine | Zellige marocain (mosaïque de carreaux émaillés taillés) — **un seul concept** |
 | Nombre d'images | … au total (… entraînement / … test), cible 20-50 |
 | Résolution | 512 × 512 (recadrage centré, `src/prepare_data.py`) |
-| Sources | Wikimedia Commons (catégories : `Zellige`, …), Openverse, photos de l'équipe |
+| Sources | Wikimedia Commons (catégories : `Zellij in Morocco`, `Zellij fountains in Morocco`), Openverse, photos de l'équipe |
 | Licences acceptées | CC0, domaine public, CC BY, CC BY-SA (pas de NC / ND) |
 | Légendes | Écrites à la main, en anglais (langue du modèle), 8-20 mots, format `zllg zellige, <description>` |
 
 ## Pipeline
 
-1. `python data/download_commons.py --category "Zellige" --limit 80` → `data/raw/` + `data/sources.csv`
+1. `python data/download_commons.py --category "Zellij in Morocco" --limit 80` → `data/raw/` + `data/sources.csv`
 2. **Tri manuel** dans `sources.csv` : colonne `keep` = 1 / 0. Retirer :
    filigranes, texte incrusté, personnes identifiables, vues trop larges où le zellige est minoritaire,
    autres styles (bois sculpté, plâtre ciselé…) pour ne **pas mélanger les concepts**.
