@@ -27,7 +27,7 @@ import pandas as pd
 import torch
 from PIL import Image
 
-from src.utils import load_config, read_jsonl, save_json, strip_trigger
+from src.utils import build_generation_index, load_config, read_jsonl, save_json, strip_trigger
 
 
 def _as_tensor(x):
@@ -103,9 +103,14 @@ def main():
     cfg = load_config(args.config, args.set)
     trigger = cfg["data"]["trigger"]
     out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
 
-    idx = pd.read_csv(Path(args.gen_dir) / "index.csv").drop_duplicates("file", keep="last")
-    idx = idx[idx["file"].map(lambda p: Path(p).exists())].reset_index(drop=True)
+    # Index reconstruit depuis les fichiers (index.csv peut être vidé par Google Drive)
+    idx = pd.DataFrame(build_generation_index(args.gen_dir, cfg))
+    if idx.empty:
+        raise SystemExit(f"Aucune image trouvée dans {args.gen_dir} — lancez d'abord src.generate")
+    idx.to_csv(out / "generations_index.csv", index=False)
+    print(idx.groupby("config").size().to_string())
     train_dir, test_dir = Path(cfg["data"]["train_dir"]), Path(cfg["data"]["test_dir"])
     train_paths = [str(train_dir / r["file_name"]) for r in read_jsonl(train_dir / "metadata.jsonl")]
     test_paths = [str(test_dir / r["file_name"]) for r in read_jsonl(test_dir / "metadata.jsonl")]

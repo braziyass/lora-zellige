@@ -105,3 +105,45 @@ def disable_torchao() -> None:
         lt.is_torchao_available = lambda *a, **k: False
     except Exception:
         pass
+
+
+def build_generation_index(gen_dir, cfg, prompts_csv="prompts/eval_prompts.csv"):
+    """Reconstruit la liste des images générées à partir des fichiers eux-mêmes
+    (results/generations/<config>/<prompt_id>_s<seed>.png), sans dépendre de
+    index.csv, que Google Drive peut vider ou tronquer."""
+    import csv as _csv
+    gen_dir = Path(gen_dir)
+    trigger = cfg["data"]["trigger"]
+    with open(prompts_csv, encoding="utf-8") as f:
+        prompts = {r["id"]: r for r in _csv.DictReader(f)}
+    test_meta = Path(cfg["data"]["test_dir"]) / "metadata.jsonl"
+    if test_meta.exists():
+        for i, item in enumerate(read_jsonl(test_meta)):
+            prompts[f"t{i:02d}"] = {"id": f"t{i:02d}", "category": "held_out", "prompt": item["text"]}
+    rows = []
+    for cdir in sorted(p for p in gen_dir.iterdir() if p.is_dir()):
+        name = cdir.name
+        if name == "base":
+            exp, rank, step, scale = "base", 0, 0, 0.0
+        else:
+            m = re.match(r"^(?P<exp>.+)_step(?P<step>\d+)_x(?P<scale>[\d.]+)$", name)
+            if not m:
+                continue
+            exp, step, scale = m["exp"], int(m["step"]), float(m["scale"])
+            info = Path(cfg["output_dir"]) / exp / "run_info.json"
+            if info.exists():
+                rank = json.loads(info.read_text())["config"]["lora"]["rank"]
+            else:
+                mr = re.match(r"r(\d+)", exp)
+                rank = int(mr[1]) if mr else None
+        for img in sorted(cdir.glob("*_s*.png")):
+            pid, seed = img.stem.rsplit("_s", 1)
+            p = prompts.get(pid)
+            if p is None:
+                continue
+            tmpl = p["prompt"].replace(trigger, "{trigger}")
+            text = fill_prompt(tmpl, None if exp == "base" else trigger)
+            rows.append({"file": str(img), "config": name, "experiment": exp, "rank": rank,
+                         "step": step, "scale": scale, "prompt_id": pid,
+                         "category": p["category"], "prompt": text, "seed": int(seed)})
+    return rows
