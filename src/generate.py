@@ -17,7 +17,7 @@ from pathlib import Path
 
 import torch
 
-from src.utils import (fill_prompt, list_lora_checkpoints, load_config, parse_ckpt_name,
+from src.utils import (disable_torchao, fill_prompt, list_lora_checkpoints, load_config, parse_ckpt_name,
                        read_jsonl)
 
 ADAPTER = "domain"
@@ -26,6 +26,7 @@ ADAPTER = "domain"
 def load_pipeline(base: str):
     from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
 
+    disable_torchao()
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dtype = torch.float16 if device == "cuda" else torch.float32
     pipe = StableDiffusionPipeline.from_pretrained(base, torch_dtype=dtype)

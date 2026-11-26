@@ -92,3 +92,16 @@ def parse_ckpt_name(ckpt_dir: Path) -> dict:
         rank = json.loads(info_path.read_text())["config"]["lora"]["rank"]
     step = int(ckpt_dir.name.split("_")[-1])
     return {"experiment": ckpt_dir.parent.name, "rank": rank, "step": step}
+
+
+def disable_torchao() -> None:
+    """Colab/Kaggle préinstallent une vieille version de torchao ; peft >= 0.17
+    lève alors une ImportError en créant la LoRA, alors qu'on ne s'en sert pas.
+    On désactive la détection de torchao dans peft."""
+    try:
+        import peft.import_utils as iu
+        iu.is_torchao_available = lambda *a, **k: False
+        import peft.tuners.lora.torchao as lt
+        lt.is_torchao_available = lambda *a, **k: False
+    except Exception:
+        pass

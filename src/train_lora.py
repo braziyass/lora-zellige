@@ -25,7 +25,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 
 from src.dataset import CaptionedImageDataset
-from src.utils import load_config, save_json, set_seed
+from src.utils import disable_torchao, load_config, save_json, set_seed
 
 
 def parse_args():
@@ -54,6 +54,7 @@ def train(cfg: dict) -> dict:
     from peft import LoraConfig
     from transformers import CLIPTextModel, CLIPTokenizer
 
+    disable_torchao()
     set_seed(cfg["seed"])
     device = "cuda" if torch.cuda.is_available() else "cpu"
     tcfg, lcfg, dcfg = cfg["train"], cfg["lora"], cfg["data"]
