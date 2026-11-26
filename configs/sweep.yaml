@@ -1,0 +1,8 @@
+# Balayage rang × nombre d'étapes
+# Un entraînement par rang ; les étapes sont comparées via les points de sauvegarde.
+# Coût estimé sur T4 : ~12-18 min par rang pour 1500 étapes → ~1 h pour 4 rangs.
+base_config: configs/base.yaml
+ranks: [4, 8, 16, 32]
+alpha_equals_rank: true
+max_steps: 1500
+save_steps: [250, 500, 1000, 1500]

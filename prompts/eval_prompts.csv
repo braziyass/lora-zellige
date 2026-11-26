@@ -1,0 +1,11 @@
+id,category,prompt
+d01,in_domain,"{trigger} zellige, eight-pointed star pattern in blue and white tiles"
+d02,in_domain,"{trigger} zellige, wall fountain decorated with green and white mosaic"
+d03,in_domain,"{trigger} zellige, close-up of glazed geometric tiles"
+d04,in_domain,"{trigger} zellige, courtyard floor with colorful geometric mosaic"
+c01,composition,"a ceramic coffee mug decorated with {trigger} zellige pattern, product photo"
+c02,composition,"a modern minimalist bathroom with a wall of {trigger} zellige tiles"
+c03,composition,"a white sneaker with {trigger} zellige pattern, studio photo"
+c04,composition,"a red bicycle leaning against a wall of {trigger} zellige"
+c05,composition,"{trigger} zellige pattern in purple and gold colors"
+c06,composition,"a cat sleeping on a {trigger} zellige floor"

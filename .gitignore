@@ -1,0 +1,23 @@
+# Données et modèles lourds : JAMAIS dans Git
+data/raw/
+data/processed/
+outputs/
+*.safetensors
+*.ckpt
+*.bin
+*.pt
+
+# Générations brutes (on ne versionne que les figures et tableaux choisis)
+results/generations/
+
+# Python / notebooks
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+.env
+
+# Gradio
+flagged/
+.gradio/
+.venv/

@@ -1,0 +1,13 @@
+# torch / torchvision sont déjà installés sur Colab et Kaggle (ne pas réinstaller)
+diffusers>=0.30
+transformers>=4.41
+peft>=0.11
+accelerate>=0.30
+safetensors
+pyyaml
+pandas
+matplotlib
+pillow
+requests
+tqdm
+gradio>=4.0

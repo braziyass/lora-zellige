@@ -1,0 +1,56 @@
+# =============================================================
+# Configuration de base — une expérience LoRA (Projet 5)
+# Toute clé peut être surchargée en ligne de commande :
+#   python -m src.train_lora --config configs/base.yaml --set lora.rank=16 experiment_name=r16
+# =============================================================
+experiment_name: r8
+seed: 42
+
+model:
+  # SD 1.5 : ~4 Go en fp16, entraînement LoRA ≈ 6-7 Go → tient dans 12 Go (T4 / P100)
+  pretrained: "stable-diffusion-v1-5/stable-diffusion-v1-5"
+
+data:
+  raw_dir: data/raw
+  sources_csv: data/sources.csv
+  processed_dir: data/processed
+  train_dir: data/processed/train
+  test_dir: data/processed/test
+  resolution: 512
+  test_size: 8              # 5 à 10 images réservées pour tester la généralisation
+  # Miroir horizontal : OK pour zellige/portes, à DÉSACTIVER pour la calligraphie
+  random_flip: true
+  # Jeton rare qui « porte » le concept appris
+  trigger: "zllg"
+  # Légende finale = gabarit appliqué à la légende courte de sources.csv
+  caption_template: "{trigger} zellige, {caption}"
+  # Licences acceptées (comparaison sur le début du nom court, en minuscules)
+  allowed_licenses: ["cc0", "public domain", "pd", "cc by ", "cc by-sa", "cc-by", "own work team"]
+
+lora:
+  rank: 8
+  alpha: 8                  # alpha = rang → échelle effective alpha/rang = 1
+  dropout: 0.0
+  target_modules: ["to_q", "to_k", "to_v", "to_out.0"]   # attention du UNet
+
+train:
+  max_steps: 1500
+  batch_size: 1
+  grad_accum: 1
+  lr: 1.0e-4
+  lr_scheduler: constant
+  warmup_steps: 0
+  mixed_precision: fp16     # T4 : fp16 (pas de bf16)
+  gradient_checkpointing: true
+  num_workers: 2
+  # Points de sauvegarde → permettent de comparer le nombre d'étapes sans relancer
+  save_steps: [250, 500, 1000, 1500]
+  log_every: 10
+
+generation:
+  steps: 30
+  guidance: 7.5
+  seeds: [0, 1, 2]
+  lora_scale: 1.0
+
+output_dir: outputs/loras
