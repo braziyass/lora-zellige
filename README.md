@@ -81,20 +81,33 @@ Trois familles de prompts (`prompts/eval_prompts.csv`) :
 - **composition** : le concept dans un contexte nouveau (« une tasse décorée de zellige… »).
   Une LoRA qui surapprend produit du zellige **mais oublie la tasse** → son CLIP-score chute.
 
-## 5. Résultats principaux *(à compléter)*
+## 5. Résultats principaux
 
-| Rang | Étapes | CLIP-score composition ↑ | Sim. domaine ↑ | Ratio mémorisation ↓ | Temps (min) | VRAM (Go) | Taille (Mo) |
-|---|---|---|---|---|---|---|---|
-| base | – | | | | – | – | – |
-| 4 | 1000 | | | | | | |
-| 8 | 1000 | | | | | | |
-| 16 | 1000 | | | | | | |
-| 32 | 1000 | | | | | | |
+Run complet sur Colab (GPU T4) : 4 rangs × 4 checkpoints + modèle de base, 15 prompts × 3 graines = 45 images par configuration.
+Tableau complet : [`results/metrics_overview.csv`](results/metrics_overview.csv). Rang 0 = modèle de base sans LoRA.
 
-![Courbes](results/figures/curves_composition.png)
-![Grille visuelle](results/figures/grid_c01_s0.png)
+| Rang | Étapes | CLIP composition ↑ | Sim. domaine (test) ↑ | Ratio mémorisation ↓ | Diversité ↑ | Taille (Mo) |
+|---|---|---|---|---|---|---|
+| base | – | 28.59 | 0.708 | 0.56 | **0.437** | – |
+| 4 | 1000 | 28.87 | 0.760 | 0.60 | 0.384 | **3.2** |
+| 8 | 1500 | 28.22 | 0.791 | 0.67 | 0.363 | 6.4 |
+| **16** | **1000** | **29.04** | 0.780 | 0.66 | 0.399 | 12.8 |
+| 32 | 1000 | 29.09 | 0.778 | 0.69 | 0.303 | 25.6 |
+| 32 | 1500 | **29.58** | **0.805** | 0.74 | 0.312 | 25.6 |
 
-**Configuration retenue :** … · **Conclusion :** …
+**Coût :** ~13 min d'entraînement par rang (1 500 étapes), quel que soit le rang ; pic de VRAM 2,6 Go (fp16 + gradient checkpointing) ; le fichier LoRA grandit linéairement avec le rang (3,2 → 25,6 Mo).
+
+**Ce que montrent les chiffres :**
+- **Le domaine est appris** : la similarité aux images de test réelles passe de 0,708 (base) à 0,76–0,80, et monte avec le nombre d'étapes et le rang.
+- **Pas de copie** : taux de quasi-copies = 0 partout et ratio de mémorisation < 1 (référence test réel ↔ train = 0,715), mais il **augmente** avec rang × étapes (0,56 → 0,74) : la LoRA se rapproche des images d'entraînement.
+- **La diversité baisse** avec l'entraînement, surtout au rang 32 (0,437 → 0,30) : premier signe de surapprentissage (les sorties se ressemblent).
+- **Le respect du texte reste stable** : le CLIP-score sur les prompts de composition varie entre 27,7 et 29,6 autour de la base (28,6). Avec 45 images par configuration, ces écarts (~±1) sont proches du bruit.
+- **Le rang coûte en taille, pas en temps** : à 1 000 étapes, le rang 16 obtient presque le même résultat que le rang 32 avec un fichier deux fois plus petit et plus de diversité.
+
+**Configuration retenue : rang 16, 1 000 étapes** — bon compromis domaine (0,780) / texte (29,0) / diversité (0,40), sans copie, 12,8 Mo.
+Alternative légère : rang 4, 1 000 étapes (3,2 Mo). Le rang 32 à 1 500 étapes maximise la fidélité au style mais perd en diversité.
+
+**Limites :** petits échantillons (6 prompts de composition × 3 graines) ; le filtre de sécurité de Stable Diffusion a remplacé quelques images par du noir (faux positifs sur les motifs), ce qui abaisse légèrement certains scores ; CLIP ne juge pas la justesse géométrique des étoiles — à compléter par l'inspection visuelle des grilles (`results/figures/grid_*.png`).
 
 ## 6. Éthique et licences
 
