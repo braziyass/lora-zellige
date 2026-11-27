@@ -107,7 +107,18 @@ Tableau complet : [`results/metrics_overview.csv`](results/metrics_overview.csv)
 **Configuration retenue : rang 16, 1 000 étapes** — bon compromis domaine (0,780) / texte (29,0) / diversité (0,40), sans copie, 12,8 Mo.
 Alternative légère : rang 4, 1 000 étapes (3,2 Mo). Le rang 32 à 1 500 étapes maximise la fidélité au style mais perd en diversité.
 
-**Limites :** petits échantillons (6 prompts de composition × 3 graines) ; le filtre de sécurité de Stable Diffusion a remplacé quelques images par du noir (faux positifs sur les motifs), ce qui abaisse légèrement certains scores ; CLIP ne juge pas la justesse géométrique des étoiles — à compléter par l'inspection visuelle des grilles (`results/figures/grid_*.png`).
+**Comparaison visuelle** — prompts de zellige et légendes de test, même graine (base · rang 4 / 1000 · rang 16 / 1000 · rang 32 / 1500) :
+le modèle de base dessine des triangles bleus génériques et une fontaine en pierre ; les LoRA produisent un pavage d'étoiles serré et des fontaines en zellige.
+
+![Comparaison base / LoRA](results/figures/comparison_base_vs_lora.png)
+
+**Contexte nouveau** (« une tasse décorée de zellige ») : l'objet est toujours respecté, mais l'effet zellige reste discret (motifs surtout noir et blanc, un peu de couleur au rang 32) — principale limite du projet.
+
+![Grille tasse](results/figures/grid_c01_s0.png)
+
+![Courbes composition](results/figures/curves_composition.png)
+
+**Limites :** petits échantillons (6 prompts de composition × 3 graines) ; le filtre de sécurité de Stable Diffusion a remplacé quelques images par du noir (faux positifs sur les motifs), ce qui abaisse légèrement certains scores ; CLIP ne juge pas la justesse géométrique des étoiles — à compléter par l'inspection visuelle des grilles (`results/figures/grid_*.png`). Notebooks : [exécution complète](notebooks/00_colab_pipeline_execution_2026-11-27.ipynb) · [résultats visuels](notebooks/00_colab_pipeline_resultats_visuels.ipynb).
 
 ## 6. Éthique et licences
 
